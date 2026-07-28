@@ -140,7 +140,14 @@
   </div>
 
   <script>
-    const socket = io('http://localhost:8000');
+    // Replace 'https://YOUR-BACKEND-NAME.onrender.com' with your actual backend URL once deployed.
+    const PRODUCTION_BACKEND_URL = 'https://YOUR-BACKEND-NAME.onrender.com';
+
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8000'
+      : PRODUCTION_BACKEND_URL;
+
+    const socket = io(BACKEND_URL);
     let activeSector = 'Textile';
     let totalPosts = 0;
     let sentimentCounts = { Bullish: 0, Bearish: 0, Neutral: 0 };
@@ -148,6 +155,10 @@
 
     socket.on('connect', () => {
       document.getElementById('status').innerText = 'Live Feed Connected';
+    });
+
+    socket.on('disconnect', () => {
+      document.getElementById('status').innerText = 'Disconnected';
     });
 
     socket.on('sectors_list', (sectors) => {
